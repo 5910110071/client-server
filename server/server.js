@@ -9,6 +9,7 @@ router.route('/bears')
     .post(function (req, res) {
         var bear = {};
         bear.name = req.body.name;
+        bear.id = req.body.id;
         bears.push(bear);
         res.json({ message: 'Bear crated!' });
 
@@ -31,6 +32,15 @@ router.route('/bears/:bear_id')
         bears[id].name = req.body.name;
         bears[id].id = req.body.id;
         res.send(bears[id]);
+    });
+
+
+router.route('/bears/:bear_id')
+    .delete(function (req, res) {
+        var id = req.params.bear_id;
+        bears.splice(id,1);
+        
+        res.json({ message: 'Bear DELETE!' });
     });
 
 app.use('/api', bodyParser.json(), router);
