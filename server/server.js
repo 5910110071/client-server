@@ -14,5 +14,10 @@ router.route('/bears')
 
     });
 
+router.route('/bears')
+    .get(function(req,res){
+        res.send(bears)
+    });
+
     app.use('/api',bodyParser.json(),router);
     app.listen(8000);
