@@ -42,22 +42,32 @@ router.route('/bears')
 router.route('/bears/:bear_id')
     .get(function (req, res) {
         var id = req.params.bear_id;
-        res.send(bears[id])
+        var bear_once_path = firebase.database().ref('/bears/'+id)
+        bear_once_path.once('value',function(snapshot){
+            res.send(snapshot.val())
+        });
     });
 
 router.route('/bears/:bear_id')
     .put(function (req, res) {
         var id = req.params.bear_id;
-        bears[id].name = req.body.name;
-        bears[id].id = req.body.id;
-        res.send(bears[id]);
+        var bear_once_path = firebase.database().ref('/bears/'+id)
+        firebase.database().ref(bear_once_path).update({
+            name: req.body.name
+        })
+
+        res.json({ message: 'Bear Updates!' });
+
     });
 
 
 router.route('/bears/:bear_id')
     .delete(function (req, res) {
         var id = req.params.bear_id;
-        bears.splice(id,1);
+        var bear_once_path = firebase.database().ref('/bears/'+id)
+        firebase.database().ref(bear_once_path).remove();
+
+       // bears.splice(id,1);
         
         res.json({ message: 'Bear DELETE!' });
     });
