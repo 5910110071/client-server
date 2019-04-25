@@ -19,5 +19,11 @@ router.route('/bears')
         res.send(bears)
     });
 
+router.route('/bears/:bear_id')
+    .get(function (req,res) {
+        var id = req.params.bear_id;
+        res.send(bears[id])
+    });
+
     app.use('/api',bodyParser.json(),router);
     app.listen(8000);
