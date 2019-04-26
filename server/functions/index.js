@@ -1,8 +1,13 @@
+const functions = require('firebase-functions');
 var express = require('express');
 var app = express();
 var router = express.Router();
 var bodyParser = require('body-parser');
 var firebase = require('firebase');
+
+var cors = require('cors');
+
+app.use(cors())
 
 var config = {
     apiKey: "AIzaSyC6zT9cYycz-EU-DNAQcaoO05DlTxmgfZg",
@@ -14,36 +19,35 @@ var config = {
   };
   firebase.initializeApp(config);
 
-var bears = [];
+exports.api = functions.https.onRequest(app)
+
 
 router.route('/bears')
-    .post(function (req, res) {
-        // var bear = {};
+    .post(function (req, res) { 
         bear_name = req.body.name;
         bear_id = req.body.id;
-        //bears.push(bear);
-        firebase.database().ref('bears/' + bear_id ).set({
-            name : bear_name,
-            id : bear_id
+        firebase.database().ref('bears/' + bear_id).set({
+            name: bear_name,
+            id: bear_id
         });
-        res.json({ message: 'Bear crated!' });
 
+        res.json({ message: 'Bear created!' });
     });
 
 router.route('/bears')
     .get(function (req, res) {
-        //res.send(bears)
         var bear_path = firebase.database().ref('bears/');
-        bear_path.on('value',function(snapshot){
+        bear_path.on('value', function (snapshot) {
             res.send(snapshot.val())
         });
+
     });
 
 router.route('/bears/:bear_id')
     .get(function (req, res) {
         var id = req.params.bear_id;
-        var bear_once_path = firebase.database().ref('/bears/'+id)
-        bear_once_path.once('value',function(snapshot){
+        var bear_once_path = firebase.database().ref('/bears/' + id)
+        bear_once_path.once('value', function (snapshot) {
             res.send(snapshot.val())
         });
     });
@@ -51,26 +55,30 @@ router.route('/bears/:bear_id')
 router.route('/bears/:bear_id')
     .put(function (req, res) {
         var id = req.params.bear_id;
-        var bear_once_path = firebase.database().ref('/bears/'+id)
+        var bear_once_path = firebase.database().ref('/bears/' + id)
         firebase.database().ref(bear_once_path).update({
             name: req.body.name
-        })
 
-        res.json({ message: 'Bear Updates!' });
-
+        });
+        res.json({ message: 'Bear Updated!' });
     });
-
 
 router.route('/bears/:bear_id')
     .delete(function (req, res) {
         var id = req.params.bear_id;
-        var bear_once_path = firebase.database().ref('/bears/'+id)
-        firebase.database().ref(bear_once_path).remove();
+        var bear_once_path = firebase.database().ref('/bears/' + id)
+        firebase.database().ref(bear_once_path).remove()
+        res.json({ message: 'Bear deleted!' });
 
-       // bears.splice(id,1);
-        
-        res.json({ message: 'Bear DELETE!' });
-    });
+        });
 
-app.use('/api', bodyParser.json(), router);
-app.listen(8000);
+
+        app.use(bodyParser.json(), router);
+        app.listen(8000);
+
+// // Create and Deploy Your First Cloud Functions
+// // https://firebase.google.com/docs/functions/write-firebase-functions
+//
+// exports.helloWorld = functions.https.onRequest((request, response) => {
+//  response.send("Hello from Firebase!");
+// });
