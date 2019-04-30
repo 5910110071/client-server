@@ -1,4 +1,4 @@
-const functions = require('firebase-functions');
+//const functions = require('firebase-functions');
 var express = require('express');
 var app = express();
 var router = express.Router();
@@ -19,7 +19,7 @@ var config = {
   };
   firebase.initializeApp(config);
 
-exports.api = functions.https.onRequest(app)
+//exports.api = functions.https.onRequest(app)
 
 
 router.route('/students')
@@ -31,9 +31,7 @@ router.route('/students')
             number: student_no,
             name: student_name,
             id: student_id
-
         });
-
         res.json({ message: 'created!' });
     });
 
@@ -74,6 +72,5 @@ router.route('/students/:student_no')
         res.json({ message: 'Deleted!' });
 
         });
-        
         app.use(bodyParser.json(), router);
         app.listen(8000);
